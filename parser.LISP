@@ -1,9 +1,7 @@
 
 ; varpowers (Monomial)
-; data una struttura Monomial ritorna la lista Vps contenente i varpowers
-; di Monomial
-
-; tipi di input richiesto: MONOMIO TRADIZIONALE - MONOMIO PARSATO
+; INPUT: a Monomial object (traditional form; parsed form)
+; RETURNS: the list of the Monomial's variable powers
 
 (defun varpowers (monomial)
   (cond ((null monomial) nil)
@@ -13,15 +11,14 @@
          (let ((vps (fourth monomial)))
            (let ((vpSorted (sort vps #'string-lessp :key #'third)))
              (let ((vpNorm (normalize-mons vpSorted))) vpNorm))))
-        (T (error "Input varpowers non valido." monomial))))
+        (T (error "Input varpowers invalid." monomial))))
 
 
 
 ; vars-of (Monomial)
-; data una struttura Monomial ritorna la lista dei simboli di variabile
-; univoci e ordinati lessicograficamente contenuti in Monomial
+; INPUT: a Monomial object (traditional form; parsed form)
+; RETURNS: the list of the Monomial's variables ordered in lexicographical order
 
-; tipi di input richiesto: MONOMIO TRADIZIONALE - MONOMIO PARSATO
 
 (defun vars-of (monomial)
   (cond ((null monomial) nil)
@@ -29,19 +26,18 @@
          (vars-of (as-monomial monomial)))
         ((is-monomial monomial)
          (find-variables (varpowers monomial)))
-        (T (error "Input vars-of non valido." monomial))))
+        (T (error "Input vars-of invalid." monomial))))
 
 (defun find-variables (vps)
   (cond ((null vps) nil)
         ((mapcar 'is-varpower vps)
          (cons (third (first vps)) (find-variables (cdr vps))))
-        (T (error "Input find-variables non valido." vps))))
+        (T (error "Input find-variables invalid." vps))))
 
 
 ; monomial-degree (Monomial)
-; data una struttura Monomial ritorna il grado totale di essa
-
-; tipi di input richiesto: MONOMIO TRADIZIONALE - MONOMIO PARSATO
+; INPUT: a Monomial object (traditional form; parsed form)
+; RETURNS: the Monomial's degree
 
 (defun monomial-degree (monomial)
   (cond ((null monomial ) nil)
@@ -49,12 +45,11 @@
          (monomial-degree (as-monomial monomial)))
         ((is-monomial monomial)
          (third monomial))
-        (T (error "Input monomial-degree non valido" monomial))))
+        (T (error "Input monomial-degree invalid" monomial))))
 
 ; monomial-coefficient (Monomial)
-; data una struttura Monomial ritorna il coefficiente di essa
-
-; tipi di input richiesto: MONOMIO TRADIZIONALE - MONOMIO PARSATO
+; INPUT: a Monomial object (traditional form; parsed form)
+; RETURNS: the Monomial's coefficient
 
 (defun monomial-coefficient (monomial)
   (cond ((null monomial ) nil)
@@ -62,15 +57,12 @@
          (monomial-coefficient (as-monomial monomial)))
         ((is-monomial monomial)
          (second monomial))
-        (T (error "Input monomial-coefficient non valido" monomial))))
+        (T (error "Input monomial-coefficient invalid" monomial))))
 
 
 ; coefficients (Poly)
-; ritorna una lista dei coefficienti del polinomio Poly nella stessa posizione
-; dei rispettivi monomi all'interno del polinomio. Eventuali ripetizioni
-; non vengono eliminate.
-
-; tipi di input richiesto: QUALSIASI
+; INPUT: a Monomial or Polynomial object (traditional form; parsed form)
+; RETURNS: the order-sensitive list of the Polynomial's coefficients 
 
 (defun coefficients (poly)
   (cond ((null poly) nil)
@@ -83,13 +75,11 @@
            (let ((polySort (merge-sort (second poly))))
              (let ((polyNor (normalize-poly polySort)))
                (mapcar 'monomial-coefficient polyNor)))))
-        (T (error "Input coefficients non valido." poly))))
+        (T (error "Input coefficients invalid." poly))))
 
 ; variables (Poly)
-; ritorna una lista contenente i simboli di variabile, univoci e ordinati
-; lessicograficamente, presenti in Poly
-
-; tipi di input richiesto: QUALSIASI
+; INPUT: a Monomial or Polynomial object (traditional form; parsed form)
+; RETURNS: the list of unique symbols of the Polynomial in lexicographical order
 
 (defun variables (poly)
   (cond ((null poly) nil)
@@ -105,14 +95,13 @@
                       (accumula (mapcar 'vars-of monsNor) nil 'append)))
                  (let ((vars (remove-duplicates listVar)))
                    (sort vars #'string-lessp)))))))
-        (T (error "Input variables non valido." poly))))
+        (T (error "Input variables invalid." poly))))
 
 
 
 ; monomials (Poly)
-; ritorna la lista ordinata e normalizzata dei monomi che appaiono in Poly
-
-; tipi di input richiesto: QUALSIASI
+; INPUT: a Monomial or Polynomial object (traditional form; parsed form)
+; RETURNS: the order-sensitive list of the Polynomial's monomials 
 
 (defun monomials (poly)
   (cond ((null poly) nil)
@@ -123,13 +112,12 @@
          (if (null (second poly)) nil
            (let ((monsSort (merge-sort (second poly))))
              (normalize-poly monsSort))))
-        (T (error "Input monomials non valido." poly))))
+        (T (error "Input monomials invalid." poly))))
 
 
 ; maxdegree (Poly)
-; ritorna il massimo grado dei monomi che appaiono in Poly
-
-; tipi di input richiesto: QUALSIASI
+; INPUT: a Monomial or Polynomial object (traditional form; parsed form)
+; RETURNS: the maximum degree amongst the Polynomial's monomials
 
 (defun maxdegree (poly)
   (cond ((null poly) nil)
@@ -142,13 +130,12 @@
            (let ((degrees (mapcar 'maxdegree mons)))
              (let ((degrSort (sort degrees #'<)))
                (first (last degrSort))))))
-        (T (error "Input maxdegree non valido." poly))))
+        (T (error "Input maxdegree invalid." poly))))
 
 
 ; mindegree (Poly)
-; ritorna il minimo grado dei monomi che appaiono in Poly
-
-; tipi di input richiesto: QUALSIASI
+; INPUT: a Monomial or Polynomial object (traditional form; parsed form)
+; RETURNS: the minimum degree amongst the Polynomial's monomials
 
 (defun mindegree (poly)
   (cond ((null poly) nil)
@@ -161,14 +148,13 @@
            (let ((degrees (mapcar 'mindegree mons)))
              (let ((degrSort (sort degrees #'<)))
                (first degrSort)))))
-        (T (error "Input mindegree non valido." poly))))
+        (T (error "Input mindegree invalid." poly))))
          
 
 
 ; polyplus (Poly1 Poly2)
-; ritorna il polinomio risultante dalla somma tra Poly1 e Poly2
-
-; tipi di input richiesto: QUALSIASI (IN COPPIA)
+; INPUT: two objects of the type Monomial or Polynomial (traditional form; parsed form)
+; RETURNS: the result of the sum between the two polynomials
 
 (defun polyplus (poly1 poly2)
   (cond ((and (null poly1) 
@@ -204,13 +190,12 @@
            (let ((monsSorted (merge-sort mons)))
              (let ((monsNorm (normalize-poly monsSorted)))
                (list 'poly monsNorm)))))
-        (T (error "Input polyplus non valido" poly1))))
+        (T (error "Input polyplus invalid" poly1))))
 
 
 ; polyminus (Poly1 Poly2)
-; ritorna il polinomio risultante dalla differenza tra Poly1 e Poly2
-
-; tipi di input richiesto: QUALSIASI (IN COPPIA)
+; INPUT: two objects of the type Monomial or Polynomial (traditional form; parsed form)
+; RETURNS: the result of the subtraction between the two polynomials
 
 (defun polyminus (poly1 poly2)
   (cond ((and (null poly1) 
@@ -247,7 +232,7 @@
              (let ((monsSorted (merge-sort mons)))
                (let ((monsNorm (normalize-poly monsSorted)))
                  (list 'poly monsNorm))))))
-        (T (error "Input polyminus non valido"))))
+        (T (error "Input polyminus invalid"))))
 
 (defun invert-coeff (mon)
   (let ((inv (- 0 (second mon))))
@@ -255,9 +240,8 @@
 
 
 ; polytimes (Poly1 Poly2)
-; ritorna il polinomio risultante dal prodotto tra Poly1 e Poly2
-
-; tipi di input richiesto: QUALSIASI (IN COPPIA)
+; INPUT: two objects of the type Monomial or Polynomial (traditional form; parsed form)
+; RETURNS: the result of the product between the two polynomials
 
 (defun polytimes (poly1 poly2)
   (cond ((or (null poly1)
@@ -278,7 +262,7 @@
            (let ((monsSorted (merge-sort mons)))
              (let ((monsNorm (normalize-poly monsSorted)))
                (list 'poly monsNorm)))))
-        (T (error "Input polytimes non valido."))))
+        (T (error "Input polytimes invalid."))))
 
 
 (defun multiply-poly (mons1 mons2)
@@ -307,10 +291,8 @@
                  
 
 ; as-monomial (Expression) 
-; ritorna la struttura a lista rappresentante il monomio Expression sottoposto
-; a parsing e propriamente ordinato
-
-; tipi di input richiesto: MONOMIO TRADIZIONALE
+; INPUT: a Monomial object (traditional form)
+; RETURNS: the parsed monomial
 
 (defun as-monomial (mon)
   (cond ((null mon) (list 'm 0 0 nil))
@@ -326,7 +308,7 @@
                         (list (list 'v (third mon) (second mon))))))
                ((eql '* (first mon))
                 (if (> 3 (list-length mon))
-                    (error "Errore. Moltiplicazione richiede almeno due fattori."
+                    (error "Error. The operation requires two objects."
                            mon)
                   (let ((listmon (mapcar 'as-monomial (cdr mon))))
                     (let ((c (accumula (isolate listmon 'second) 1 '*))
@@ -340,8 +322,8 @@
                           (let ((vpsNor (normalize-mons vpsSort)))
                             (list 'm c td vpsNor))))))))
                ((atom (first mon)) (list 'm 1 1 (list 'v 1 (first mon))))
-               (T (error "Input as-monomial non valido" mon))))
-        (T (error "Input as-monomial non valido" mon))))
+               (T (error "Input as-monomial invalid" mon))))
+        (T (error "Input as-monomial invalid" mon))))
 
 
 (defun isolate (list position)
@@ -370,10 +352,8 @@
                 
 
 ; as-polynomial (Expression)
-; ritorna la struttura a lista rappresentante il polinomio Expression 
-; sottoposto a parsing e propriamente ordinato
-
-; tipi di input richiesto: MONOMIO TRADIZIONALE - POLINOMIO TRADIZIONALE
+; INPUT: a Monomial or Polynomial object (traditional form)
+; RETURNS: the parsed polynomial
 
 (defun as-polynomial (x) 
   (cond ((or (null x) 
@@ -426,10 +406,10 @@
         
 
 ; polyval (Poly Values)
-; ritorna il valore del polinomio Poly calcolato nel punto n-dimensionale 
-; rappresentato dalla lista Values
-
-; tipi di input richiesto: QUALSIASI + LISTA DI INTERI
+; INPUT: a Monomial or Polynomial object (traditional form; parsed form) 
+;        a List of integers for each variable in the polynomial
+; RETURNS: the value of the polynomial computed in the n-dimentional point represented
+;          by the list of values
 
 (defun polyval (poly1 values)
   (cond ((and (null poly1) (null values)) 0)
@@ -443,8 +423,8 @@
              (let ((vars (variables (list 'poly monsNorm))))
                (if (eql (list-length vars) (list-length values))
                    (evaluate-poly monsNorm vars values)
-                 (error "I valori non corrispondono"))))))
-        (T (error "Input polyval non valido" poly1))))
+                 (error "Values do not coincide"))))))
+        (T (error "Input polyval invalid" poly1))))
 
 (defun evaluate-poly (mons vars values)
   (if (null mons) 0
@@ -468,10 +448,8 @@
 
 
 ; pprint-polynomial (Poly)
-; ritorna nil dopo aver stampato sullo standard output la rappresentazione 
-; tradizionale del polinomio Poly
-
-; tipi di input richiesto: QUALSIASI
+; INPUT: a Monomial or Polynomial object (traditional form; parsed form)
+; RETURNS: the polynomial in human-readable format
 
 (defun pprint-polynomial (poly)
   (cond ((null poly) (format t "~D " 0))
@@ -503,7 +481,7 @@
 
 
 
-; Algoritmo MERGE SORT
+; Merge Sort algorithm
               
 
 (defun merge-sort (mons)
@@ -558,14 +536,13 @@
   
          
 
-; Funzione accumula
+; Other functions for support
 
 (defun accumula (list init function)
   (if (null list) init
     (funcall function (first list) (accumula (cdr list) init function))))
 
 
-; Funzione is-trad-poly
 
 (defun is-trad-poly (poly)
   (cond ((null poly) nil)
@@ -586,9 +563,6 @@
         (T nil)))
 
 
-
-
-; ----- Librerie utili per l'implementazione delle funzioni
 (defun is-polynomial (p)
   (and (listp p)
        (eq 'poly (first p))
